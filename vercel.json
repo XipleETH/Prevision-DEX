@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "echo using nested vercel.json in packages/frontend",
+  "installCommand": null,
+  "framework": null,
+  "outputDirectory": null
+}

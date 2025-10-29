@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Contracts - no need to deploy
+packages/contracts/artifacts
+packages/contracts/cache
+packages/contracts/typechain-types
+
+# Relayer - separate service
+packages/relayer
+
+# Tests
+packages/contracts/test
+test
+
+# Build artifacts (except frontend dist)
+packages/contracts/dist
+packages/relayer/dist
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Clean legacy CI/deploy artifacts (avoid linking old project files)
+vercel.json
+railway.json
+Dockerfile
+build-vercel.sh
+README-railway.md
+# Ignore legacy root API (frontend project has its own API in packages/frontend/api)
+api/
