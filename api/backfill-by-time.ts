@@ -2,13 +2,13 @@ import { Redis } from '@upstash/redis'
 
 export const config = { runtime: 'edge' }
 
-// GET /api/backfill-by-time?secret=...&chain=base-sepolia&oracle=0x...&from=ISO_OR_EPOCH&to=ISO_OR_EPOCH&rpc=OPTIONAL
+// GET /api/backfill-by-time?secret=...&chain=bsc-testnet&oracle=0x...&from=ISO_OR_EPOCH&to=ISO_OR_EPOCH&rpc=OPTIONAL
 export default async function handler(req: Request): Promise<Response> {
   try {
     const { searchParams } = new URL(req.url)
     const secret = String(searchParams.get('secret') || '')
     if (!secret || secret !== (process.env.INGEST_SECRET || '')) return json({ ok: false, error: 'unauthorized' })
-    const chain = String(searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = String(searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const oracle = String(searchParams.get('oracle') || '')
     const fromRaw = (searchParams.get('from') || '').trim()
     const toRaw = (searchParams.get('to') || '').trim()
@@ -21,9 +21,9 @@ export default async function handler(req: Request): Promise<Response> {
     const tMin = Math.min(fromTs, toTs)
     const tMax = Math.max(fromTs, toTs)
 
-    const rpc = rpcOverride || (chain === 'base'
-      ? ((process.env.BASE_RPC_URL || process.env.BASE_MAINNET_RPC || process.env.BASE_MAINNET_RPC_URL || process.env.BASE_RPC || process.env.VITE_BASE_RPC || process.env.VITE_BASE_MAINNET_RPC) || '')
-      : ((process.env.BASE_SEPOLIA_RPC_URL || process.env.BASE_SEPOLIA_RPC || process.env.BASE_SEPOLIA_MAINNET_RPC_URL || process.env.VITE_BASE_SEPOLIA_RPC) || ''))
+    const rpc = rpcOverride || (chain === 'bsc'
+      ? ((process.env.BSC_RPC_URL || process.env.BSC_RPC || process.env.VITE_BSC_RPC) || '')
+      : ((process.env.BSC_TESTNET_RPC_URL || process.env.BSC_TESTNET_RPC || process.env.VITE_BSC_TESTNET_RPC) || ''))
     if (!rpc) return json({ ok: false, error: 'rpc not configured' })
 
     const rpcCall = async (method: string, params: any[]) => {

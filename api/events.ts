@@ -2,11 +2,11 @@ import { Redis } from '@upstash/redis'
 
 export const config = { runtime: 'edge' }
 
-// GET /api/events?chain=base-sepolia&market=localaway&limit=20&leagues=39,140
+// GET /api/events?chain=bsc-testnet&market=localaway&limit=20&leagues=39,140
 export default async function handler(req: Request): Promise<Response> {
   try {
     const { searchParams } = new URL(req.url)
-    const chain = (searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = (searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const market = (searchParams.get('market') || 'btcd').toLowerCase()
     const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit') || '20')))
     const leagues = (searchParams.get('leagues') || '').trim()
@@ -47,9 +47,9 @@ export default async function handler(req: Request): Promise<Response> {
 
         // Secondary fallback: on-chain logs if oracle provided
         if (!recent.length && oracle) {
-          const rpc = chain === 'base'
-            ? (process.env.BASE_RPC_URL || '')
-            : (process.env.BASE_SEPOLIA_RPC_URL || '')
+          const rpc = chain === 'bsc'
+            ? ((process.env.BSC_RPC_URL || process.env.BSC_RPC || process.env.VITE_BSC_RPC) || '')
+            : ((process.env.BSC_TESTNET_RPC_URL || process.env.BSC_TESTNET_RPC || process.env.VITE_BSC_TESTNET_RPC) || '')
           if (rpc) {
             const rpcCall = async (method: string, params: any[]) => {
               const res = await fetch(rpc, {
@@ -154,9 +154,9 @@ export default async function handler(req: Request): Promise<Response> {
 
         // Secondary: on-chain logs if oracle provided
         if (!recent.length && oracle) {
-          const rpc = chain === 'base'
-            ? (process.env.BASE_RPC_URL || '')
-            : (process.env.BASE_SEPOLIA_RPC_URL || '')
+          const rpc = chain === 'bsc'
+            ? ((process.env.BSC_RPC_URL || process.env.BSC_RPC || process.env.VITE_BSC_RPC) || '')
+            : ((process.env.BSC_TESTNET_RPC_URL || process.env.BSC_TESTNET_RPC || process.env.VITE_BSC_TESTNET_RPC) || '')
           if (rpc) {
             const rpcCall = async (method: string, params: any[]) => {
               const res = await fetch(rpc, {

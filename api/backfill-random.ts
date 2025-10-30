@@ -9,15 +9,15 @@ export default async function handler(req: Request): Promise<Response> {
     const body = await req.json() as any
     const secret = String(body?.secret || '')
     if (!secret || secret !== (process.env.INGEST_SECRET || '')) return json({ error: 'unauthorized' }, 401)
-    const chain = String(body?.chain || 'base-sepolia').toLowerCase()
+  const chain = String(body?.chain || 'bsc-testnet').toLowerCase()
     const oracle = String(body?.oracle || '')
     let fromBlock = body?.fromBlock !== undefined ? Number(body?.fromBlock) : NaN
     let toBlock = body?.toBlock !== undefined ? Number(body?.toBlock) : NaN
     const lookbackBlocks = body?.lookbackBlocks !== undefined ? Number(body?.lookbackBlocks) : NaN
 
-    const rpc = chain === 'base'
-      ? (process.env.BASE_RPC_URL || '')
-      : (process.env.BASE_SEPOLIA_RPC_URL || '')
+    const rpc = chain === 'bsc'
+      ? ((process.env.BSC_RPC_URL || process.env.BSC_RPC || process.env.VITE_BSC_RPC) || '')
+      : ((process.env.BSC_TESTNET_RPC_URL || process.env.BSC_TESTNET_RPC || process.env.VITE_BSC_TESTNET_RPC) || '')
     if (!rpc) return json({ error: 'rpc not configured' }, 500)
 
     const rpcCall = async (method: string, params: any[]) => {

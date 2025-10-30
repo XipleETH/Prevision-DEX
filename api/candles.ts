@@ -2,11 +2,11 @@ import { Redis } from '@upstash/redis'
 
 export const config = { runtime: 'edge' }
 
-// Query: ?chain=base-sepolia&tf=15m&market=btcd|random|localaway[&metric=delta]
+// Query: ?chain=bsc-testnet&tf=15m&market=btcd|random|localaway[&metric=delta]
 export default async function handler(req: Request): Promise<Response> {
   try {
     const { searchParams } = new URL(req.url)
-    const chain = (searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = (searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const tf = (searchParams.get('tf') || '15m').toLowerCase()
     const market = (searchParams.get('market') || 'btcd').toLowerCase()
     const metric = (searchParams.get('metric') || '').toLowerCase()

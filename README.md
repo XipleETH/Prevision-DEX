@@ -21,12 +21,12 @@ A decentralized futures exchange for perpetuals where prices come from algorithm
 - Faster iteration: community proposals → Test PERPs → rapid validation on Base.
 
 ## Tech stack
-- Blockchain: BNB Chain (BSC), BSC Testnet (EVM); Perps + Oracle contracts
+- Blockchain: Base, Base Sepolia (EVM); Perps + Oracle contracts
 - Web3: wagmi, viem, RainbowKit (WalletConnect)
 - Frontend: React, TypeScript, Vite, TanStack Query, Lightweight Charts
-- Infra (test): Upstash Redis, serverless REST API (VITE_API_BASE)
-- Oracles: Chainlink Functions/Data Feeds + Automation (migrando desde workers centralizados)
-- Deploy: Vercel (frontend monorepo en `packages/frontend`)
+- Infra (test): Railway workers/scripts, Upstash Redis, REST API (VITE_API_BASE)
+- Oracles (plan): Chainlink Functions/Data Feeds + Automation
+- Deploy: Vercel (frontend)
 
 ## Key flows
 - Trade: connect wallet → choose index → set leverage/margin → open/close

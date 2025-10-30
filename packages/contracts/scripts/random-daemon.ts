@@ -27,7 +27,7 @@ async function main() {
   // Optional DB ingest for shared chart
   const ingestUrl = (process.env.INGEST_URL || '').trim()
   const ingestSecret = (process.env.INGEST_SECRET || '').trim()
-  const chain = (process.env.CHAIN || (network.name === 'baseSepolia' ? 'base-sepolia' : (network.name === 'base' ? 'base' : network.name))).toLowerCase()
+  const chain = (process.env.CHAIN || (network.name === 'bscTestnet' ? 'bsc-testnet' : (network.name === 'bsc' ? 'bsc' : network.name))).toLowerCase()
   const market = (process.env.MARKET || 'random').toLowerCase()
 
   while (true) {

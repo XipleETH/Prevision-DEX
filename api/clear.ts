@@ -5,7 +5,7 @@ export const config = { runtime: 'edge' }
 // Clear/trim ticks for a given chain+market
 // GET params:
 //   secret: must match INGEST_SECRET
-//   chain: e.g. base-sepolia | base (default base-sepolia)
+//   chain: e.g. bsc-testnet | bsc (default bsc-testnet)
 //   market: btcd | random (default btcd)
 //   del=true -> delete entire key
 //   before=unixSec -> remove scores <= before
@@ -18,7 +18,7 @@ export default async function handler(req: Request): Promise<Response> {
     const expected = (process.env.INGEST_SECRET || '').trim()
     if (!expected || secret !== expected) return json({ error: 'unauthorized' }, 401)
 
-    const chain = (searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = (searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const market = (searchParams.get('market') || 'btcd').toLowerCase()
     const del = String(searchParams.get('del') || '').toLowerCase() === 'true'
     const beforeStr = searchParams.get('before')

@@ -9,7 +9,7 @@ export default async function handler(req: Request): Promise<Response> {
     const body = await req.json() as any
     const secret = String(body?.secret || '')
     if (!secret || secret !== (process.env.INGEST_SECRET || '')) return resp(401, { error: 'unauthorized' })
-    const chain = String(body?.chain || 'base-sepolia').toLowerCase()
+  const chain = String(body?.chain || 'bsc-testnet').toLowerCase()
     const market = String(body?.market || 'btcd').toLowerCase()
     const mode = String(body?.mode || '').toLowerCase()
   const time = Number(body?.time)

@@ -36,7 +36,7 @@ async function main() {
   let pages = 0
   const topic = ethers.id('PriceUpdated(int256,uint256)')
 
-  const chain = (network.name === 'baseSepolia') ? 'base-sepolia' : (network.name === 'base' ? 'base' : network.name)
+  const chain = (network.name === 'bscTestnet') ? 'bsc-testnet' : (network.name === 'bsc' ? 'bsc' : network.name)
   const batch: Array<{ time: number; value: number }> = []
 
   const flush = async () => {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useRef, useContext, createContext, Component } from 'react'
 import { http, WagmiProvider, useSwitchChain, useAccount } from 'wagmi'
-import { bsc as base, bscTestnet as baseSepolia } from 'viem/chains'
+import { bsc, bscTestnet } from 'viem/chains'
 import { RainbowKitProvider, ConnectButton, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import '@rainbow-me/rainbowkit/styles.css'
@@ -35,7 +35,7 @@ const translations: Record<Lang, Record<string, string>> = {
   lab_new_test_in: 'Nuevo Test Perps en:',
   lab_getting_ready: 'Preparando para testing…',
   lab_winner: 'Ganadora:',
-  lab_switch_to_sepolia: 'Cambia a Base Sepolia para votar',
+  lab_switch_to_sepolia: 'Cambia a BSC Testnet para votar',
   lab_list_up: 'Sube',
   lab_list_down: 'Baja',
   lab_list_api: 'API',
@@ -156,7 +156,7 @@ const translations: Record<Lang, Record<string, string>> = {
   lab_new_test_in: 'New test perps in:',
   lab_getting_ready: 'Getting ready for testing…',
   lab_winner: 'Winner:',
-  lab_switch_to_sepolia: 'Switch to Base Sepolia to vote',
+  lab_switch_to_sepolia: 'Switch to BSC Testnet to vote',
   lab_list_up: 'Up',
   lab_list_down: 'Down',
   lab_list_api: 'API',
@@ -343,7 +343,7 @@ function normalizeContinuity(cs: Candle[]): Candle[] {
   return out
 }
 
-function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, localawayLoading, randomEvents, randomLoading }: { oracleAddress: string, chainKey: 'base'|'baseSepolia', market: 'btcd'|'random'|'localaway', localawayEvents?: Array<{time:number,value:number,meta:any}>, localawayLoading?: boolean, randomEvents?: Array<{time:number,value:number,meta?:any}>, randomLoading?: boolean }) {
+function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, localawayLoading, randomEvents, randomLoading }: { oracleAddress: string, chainKey: 'bsc'|'bscTestnet', market: 'btcd'|'random'|'localaway', localawayEvents?: Array<{time:number,value:number,meta:any}>, localawayLoading?: boolean, randomEvents?: Array<{time:number,value:number,meta?:any}>, randomLoading?: boolean }) {
   const { t, lang } = useI18n()
   const [tf, setTf] = useState<'1m'|'5m'|'15m'|'1h'|'4h'|'1d'|'3d'|'1w'>('15m')
   const [candles, setCandles] = useState<Candle[]>([])
@@ -369,13 +369,13 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
   }, [market])
 
   // Build history from on-chain events and then poll live values
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
-  const chainParam = chainKey === 'baseSepolia' ? 'base-sepolia' : 'base'
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
+  const chainParam = chainKey === 'bscTestnet' ? 'bsc-testnet' : 'bsc'
 
   // Fetch pre-aggregated candle JSON; bootstrap from localStorage
   useEffect(() => {
     let cancelled = false
-    const key = chainKey === 'baseSepolia' ? 'base-sepolia' : 'base'
+  const key = chainKey === 'bscTestnet' ? 'bsc-testnet' : 'bsc'
     const lsKey = `btcd:candles:${key}:${market}:${tf}`
   // Use serverless API endpoint backed by DB
   const baseUrl = (import.meta as any).env?.VITE_API_BASE || ''
@@ -416,7 +416,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
 
   // Auto-refresh candles from API every 60s (no page reload)
   useEffect(() => {
-  const key = chainKey === 'baseSepolia' ? 'base-sepolia' : 'base'
+  const key = chainKey === 'bscTestnet' ? 'bsc-testnet' : 'bsc'
   const lsKey = `btcd:candles:${key}:${market}:${tf}`
     const baseUrl = (import.meta as any).env?.VITE_API_BASE || ''
   const url = `${baseUrl}/api/candles?chain=${key}&tf=${tf}&market=${market}${market==='localaway' ? '&metric=delta' : ''}`
@@ -479,7 +479,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
           last.low = Math.min(last.low, v)
           updated[updated.length - 1] = last
           // persist
-          try { const key = (chainKey === 'baseSepolia' ? 'base-sepolia' : 'base'); localStorage.setItem(`btcd:candles:${key}:${market}:${tf}`, JSON.stringify(updated)) } catch {}
+          try { const key = (chainKey === 'bscTestnet' ? 'bsc-testnet' : 'bsc'); localStorage.setItem(`btcd:candles:${key}:${market}:${tf}`, JSON.stringify(updated)) } catch {}
           return updated
         }
         // Rolled into a new bucket: start a new candle that opens at previous close
@@ -489,7 +489,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
           const nc: Candle = { time: currBucket as UTCTimestamp, open, high: Math.max(open, v), low: Math.min(open, v), close: v }
           updated.push(nc)
           // persist
-          try { const key = (chainKey === 'baseSepolia' ? 'base-sepolia' : 'base'); localStorage.setItem(`btcd:candles:${key}:${market}:${tf}`, JSON.stringify(updated)) } catch {}
+          try { const key = (chainKey === 'bscTestnet' ? 'bsc-testnet' : 'bsc'); localStorage.setItem(`btcd:candles:${key}:${market}:${tf}`, JSON.stringify(updated)) } catch {}
           return updated
         }
         return updated
@@ -607,7 +607,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
     const chart = createChart(el, {
       width: el.clientWidth,
       height: initialHeight,
-      layout: { background: { type: ColorType.Solid, color: '#0F1117' }, textColor: '#F8FAFC' },
+      layout: { background: { type: ColorType.Solid, color: '#0b1221' }, textColor: '#DDD' },
       rightPriceScale: { borderVisible: false },
       timeScale: { borderVisible: false, timeVisible: true, secondsVisible: false },
     })
@@ -616,13 +616,13 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
     const isLocalAway = market === 'localaway'
     const series = chart.addCandlestickSeries(
       isRandom
-        // Random: bright cyan up, vivid yellow down
-        ? { upColor: '#00B0FF', downColor: '#FFD600', borderVisible: false, wickUpColor: '#33C2FF', wickDownColor: '#FFE04D' }
+        // Random: up = blue palette (kept), down = amber/yellow (matches short button)
+        ? { upColor: '#3b82f6', downColor: '#FBBF24', borderVisible: false, wickUpColor: '#60A5FA', wickDownColor: '#FCD34D' }
         : (isLocalAway
-            // Home/Away: neon purple up, bright pink down
-            ? { upColor: '#7C4DFF', downColor: '#FF80AB', borderVisible: false, wickUpColor: '#9575FF', wickDownColor: '#FF99BE' }
-            // BTC.D: neon green up, bright red-pink down
-            : { upColor: '#00E676', downColor: '#FF3D71', borderVisible: false, wickUpColor: '#33EC90', wickDownColor: '#FF5C8C' }
+            // Home/Away: up = light opaque purple, down = bone (off-white)
+            ? { upColor: '#C4B5FD', downColor: '#E7E5E4', borderVisible: false, wickUpColor: '#DDD6FE', wickDownColor: '#D6D3D1' }
+            // BTC.D: keep green/red defaults
+            : { upColor: '#16a34a', downColor: '#ef4444', borderVisible: false, wickUpColor: '#16a34a', wickDownColor: '#ef4444' }
           )
     )
     seriesRef.current = series as any
@@ -811,17 +811,17 @@ function AppInner({ routeMarket, isLab }: { routeMarket: 'btcd'|'random'|'locala
   const config = useMemo(() => getDefaultConfig({
     appName: 'Perp-it',
     projectId: 'btcd-temp',
-  chains: [base, baseSepolia],
+    chains: [bsc, bscTestnet],
     transports: {
-  [base.id]: http(),
-  [baseSepolia.id]: http(),
+      [bsc.id]: http(),
+      [bscTestnet.id]: http(),
     }
   }), [])
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-  <RainbowKitProvider initialChain={baseSepolia}>
+  <RainbowKitProvider initialChain={bscTestnet}>
           <AppContent market={market} isLab={isLab} />
         </RainbowKitProvider>
       </QueryClientProvider>
@@ -842,17 +842,17 @@ function AppContent({ market, isLab }: { market: 'btcd'|'random'|'localaway', is
   const { isConnected } = useAccount()
   const { switchChainAsync } = useSwitchChain()
   // UI chain override to allow switching even when disconnected (persisted)
-  const [uiChain, setUiChain] = useState<'base'|'baseSepolia' | null>(() => {
+  const [uiChain, setUiChain] = useState<'bsc'|'bscTestnet' | null>(() => {
     try {
       const raw = localStorage.getItem('btcd:ui:chain')
-      if (raw === 'base' || raw === 'baseSepolia') return raw
+      if (raw === 'bsc' || raw === 'bscTestnet') return raw as any
     } catch {}
     return null
   })
-  // Effective chain: wallet chain if connected, else UI override or default Base Sepolia
-  const chain: 'base'|'baseSepolia' = isConnected
-  ? (chainId === base.id ? 'base' : 'baseSepolia')
-    : (uiChain || 'baseSepolia')
+  // Effective chain: wallet chain if connected, else UI override or default BSC Testnet
+  const chain: 'bsc'|'bscTestnet' = isConnected
+    ? (chainId === bsc.id ? 'bsc' : 'bscTestnet')
+    : (uiChain || 'bscTestnet')
 
   // addresses from deployed mapping (read-only in UI)
   const [oracleAddress, setOracleAddress] = useState<string>('')
@@ -865,7 +865,7 @@ function AppContent({ market, isLab }: { market: 'btcd'|'random'|'localaway', is
   }, [chain, market])
 
   // Shared events fetcher (avoids duplicate polling across components)
-  const chainParam = chain === 'baseSepolia' ? 'base-sepolia' : 'base'
+  const chainParam = chain === 'bscTestnet' ? 'bsc-testnet' : 'bsc'
   const baseUrl = (import.meta as any).env?.VITE_API_BASE || ''
   const useEvents = (mkt: 'localaway'|'random', enabled: boolean) => {
     const url = mkt === 'random'
@@ -915,24 +915,24 @@ function AppContent({ market, isLab }: { market: 'btcd'|'random'|'localaway', is
           <div className={`network-menu ${isLab ? 'lab-mode' : ''}`} style={{ marginTop: 2 }}>
             <div className="segmented">
               <button
-                className={(isLab ? 'seg' : (chain==='base' ? 'seg active' : 'seg'))}
+                className={(isLab ? 'seg' : (chain==='bsc' ? 'seg active' : 'seg'))}
                 onClick={async ()=>{
-                  try { localStorage.setItem('btcd:ui:chain','base') } catch {}
-                  setUiChain('base')
+                  try { localStorage.setItem('btcd:ui:chain','bsc') } catch {}
+                  setUiChain('bsc')
                   if (isConnected) {
-                    try { await switchChainAsync?.({ chainId: base.id }) } catch {}
+                    try { await switchChainAsync?.({ chainId: bsc.id }) } catch {}
                   }
                   // If currently in Lab, exit to charts when switching network
                   if (isLab) { try { window.location.hash = '#btcd' } catch {} }
                 }}
               >{t('ui_network_live')}</button>
               <button
-                className={(isLab ? 'seg' : (chain==='baseSepolia' ? 'seg active' : 'seg'))}
+                className={(isLab ? 'seg' : (chain==='bscTestnet' ? 'seg active' : 'seg'))}
                 onClick={async ()=>{
-                  try { localStorage.setItem('btcd:ui:chain','baseSepolia') } catch {}
-                  setUiChain('baseSepolia')
+                  try { localStorage.setItem('btcd:ui:chain','bscTestnet') } catch {}
+                  setUiChain('bscTestnet')
                   if (isConnected) {
-                    try { await switchChainAsync?.({ chainId: baseSepolia.id }) } catch {}
+                    try { await switchChainAsync?.({ chainId: bscTestnet.id }) } catch {}
                   }
                   // If currently in Lab, exit to charts when switching network
                   if (isLab) { try { window.location.hash = '#btcd' } catch {} }
@@ -1010,7 +1010,7 @@ import { useWriteContract, useWaitForTransactionReceipt, useReadContract, useCha
 import { parseEther, formatUnits, formatEther, createPublicClient, http as viemHttp } from 'viem'
 
 type OpenControlled = { isLong: boolean; setIsLong: (v:boolean)=>void; leverage: number; setLeverage: (n:number)=>void; marginEth: string; setMarginEth: (s:string)=>void }
-function OpenPosition({ perpsAddress, chainKey, compact, controlled }: { perpsAddress: string, chainKey: 'base'|'baseSepolia', compact?: boolean, controlled?: OpenControlled }) {
+function OpenPosition({ perpsAddress, chainKey, compact, controlled }: { perpsAddress: string, chainKey: 'bsc'|'bscTestnet', compact?: boolean, controlled?: OpenControlled }) {
   const { t } = useI18n()
   const { address } = useAccount()
   const [isLongLocal, setIsLongLocal] = useState(true)
@@ -1034,7 +1034,7 @@ function OpenPosition({ perpsAddress, chainKey, compact, controlled }: { perpsAd
       return null
     }
   }
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
   const parsedMargin = safeParseEther(marginEth)
   const { data: pos } = useReadContract({
     abi: perpsAbi as any,
@@ -1107,10 +1107,10 @@ function OpenPosition({ perpsAddress, chainKey, compact, controlled }: { perpsAd
   )
 }
 
-function MyPosition({ perpsAddress, oracleAddress, market, chainKey }: { perpsAddress: string, oracleAddress: string, market: 'btcd'|'random'|'localaway', chainKey: 'base'|'baseSepolia' }) {
+function MyPosition({ perpsAddress, oracleAddress, market, chainKey }: { perpsAddress: string, oracleAddress: string, market: 'btcd'|'random'|'localaway', chainKey: 'bsc'|'bscTestnet' }) {
   const { t } = useI18n()
   const { address } = useAccount()
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
   const { data: pos } = useReadContract({
     abi: perpsAbi as any,
     address: (perpsAddress || undefined) as any,
@@ -1181,11 +1181,11 @@ function MyPosition({ perpsAddress, oracleAddress, market, chainKey }: { perpsAd
   )
 }
 
-function ClosePosition({ perpsAddress, oracleAddress, chainKey, minimal }: { perpsAddress: string, oracleAddress: string, chainKey: 'base'|'baseSepolia', minimal?: boolean }) {
+function ClosePosition({ perpsAddress, oracleAddress, chainKey, minimal }: { perpsAddress: string, oracleAddress: string, chainKey: 'bsc'|'bscTestnet', minimal?: boolean }) {
   const { t } = useI18n()
   const { data: hash, writeContract, isPending, error } = useWriteContract()
   const { isLoading: mining } = useWaitForTransactionReceipt({ hash })
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
   const { address } = useAccount()
   const { data: pos } = useReadContract({
     abi: perpsAbi as any,
@@ -1263,10 +1263,10 @@ function ClosePosition({ perpsAddress, oracleAddress, chainKey, minimal }: { per
   )
 }
 
-function StopsManager({ perpsAddress, chainKey, market, compact }: { perpsAddress: string, chainKey: 'base'|'baseSepolia', market: 'btcd'|'random'|'localaway', compact?: boolean }) {
+function StopsManager({ perpsAddress, chainKey, market, compact }: { perpsAddress: string, chainKey: 'bsc'|'bscTestnet', market: 'btcd'|'random'|'localaway', compact?: boolean }) {
   const { t } = useI18n()
   const { address } = useAccount()
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
   const { data: pos } = useReadContract({
     abi: perpsAbi as any,
     address: (perpsAddress || undefined) as any,
@@ -1449,7 +1449,7 @@ function StopsManager({ perpsAddress, chainKey, market, compact }: { perpsAddres
   )
 }
 
-function LiquidateSelf({ perpsAddress, chainKey }: { perpsAddress: string, chainKey: 'base'|'baseSepolia' }) {
+function LiquidateSelf({ perpsAddress, chainKey }: { perpsAddress: string, chainKey: 'bsc'|'bscTestnet' }) {
   const { t } = useI18n()
   const { address } = useAccount()
   const { data: hash, writeContract, isPending, error } = useWriteContract()
@@ -1461,7 +1461,7 @@ function LiquidateSelf({ perpsAddress, chainKey }: { perpsAddress: string, chain
     args: [address!],
     query: { enabled: Boolean(perpsAddress && address) }
   })
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
   const simLiq = useSimulateContract({
     abi: perpsAbi as any,
     address: (perpsAddress || undefined) as any,
@@ -1496,8 +1496,8 @@ function LiquidateSelf({ perpsAddress, chainKey }: { perpsAddress: string, chain
   )
 }
 
-function OraclePrice({ oracleAddress, market, chainKey }: { oracleAddress: string, market: 'btcd'|'random'|'localaway', chainKey: 'base'|'baseSepolia' }) {
-  const desiredChain = chainKey === 'baseSepolia' ? baseSepolia : base
+function OraclePrice({ oracleAddress, market, chainKey }: { oracleAddress: string, market: 'btcd'|'random'|'localaway', chainKey: 'bsc'|'bscTestnet' }) {
+  const desiredChain = chainKey === 'bscTestnet' ? bscTestnet : bsc
   const { data } = useReadContract({
     abi: oracleAbi as any,
     address: (oracleAddress || undefined) as any,
@@ -1564,9 +1564,9 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
 
 // NetworkHelper removed: the page now follows the wallet network directly via ConnectButton's switch
 
-function ContractTreasury({ perpsAddress, desired }: { perpsAddress: string, desired: 'base'|'baseSepolia' }) {
+function ContractTreasury({ perpsAddress, desired }: { perpsAddress: string, desired: 'bsc'|'bscTestnet' }) {
   const { t } = useI18n()
-  const chain = desired === 'baseSepolia' ? baseSepolia : base
+  const chain = desired === 'bscTestnet' ? bscTestnet : bsc
   const { data: bal } = useBalance({ address: (perpsAddress || undefined) as any, chainId: chain.id, query: { enabled: Boolean(perpsAddress) } })
   const [amt, setAmt] = useState('0.1')
   const { sendTransactionAsync, isPending, error } = useSendTransaction()
@@ -1617,7 +1617,7 @@ function ContractTreasury({ perpsAddress, desired }: { perpsAddress: string, des
 }
 
 // Combined, pro-looking panels
-function TradePanel({ perpsAddress, oracleAddress, chainKey, market }: { perpsAddress: string, oracleAddress: string, chainKey: 'base'|'baseSepolia', market: 'btcd'|'random'|'localaway' }) {
+function TradePanel({ perpsAddress, oracleAddress, chainKey, market }: { perpsAddress: string, oracleAddress: string, chainKey: 'bsc'|'bscTestnet', market: 'btcd'|'random'|'localaway' }) {
   const { t } = useI18n()
   const [isLong, setIsLong] = useState(true)
   const [leverage, setLeverage] = useState(10)
@@ -1652,7 +1652,7 @@ function TradePanel({ perpsAddress, oracleAddress, chainKey, market }: { perpsAd
   )
 }
 
-function PositionCard({ perpsAddress, oracleAddress, market, chainKey }: { perpsAddress: string, oracleAddress: string, market: 'btcd'|'random'|'localaway', chainKey: 'base'|'baseSepolia' }) {
+function PositionCard({ perpsAddress, oracleAddress, market, chainKey }: { perpsAddress: string, oracleAddress: string, market: 'btcd'|'random'|'localaway', chainKey: 'bsc'|'bscTestnet' }) {
   const { t } = useI18n()
   return (
     <div className="card">
@@ -1672,7 +1672,7 @@ function OracleCard({ oracleAddress }: { oracleAddress: string }) {
   return null
 }
 
-function LiquidationCard({ perpsAddress, chainKey }: { perpsAddress: string, chainKey: 'base'|'baseSepolia' }) {
+function LiquidationCard({ perpsAddress, chainKey }: { perpsAddress: string, chainKey: 'bsc'|'bscTestnet' }) {
   const { t } = useI18n()
   return (
     <div className="card">
@@ -1684,7 +1684,7 @@ function LiquidationCard({ perpsAddress, chainKey }: { perpsAddress: string, cha
   )
 }
 
-function StopsCard({ perpsAddress, chainKey, market }: { perpsAddress: string, chainKey: 'base'|'baseSepolia', market: 'btcd'|'random'|'localaway' }) {
+function StopsCard({ perpsAddress, chainKey, market }: { perpsAddress: string, chainKey: 'bsc'|'bscTestnet', market: 'btcd'|'random'|'localaway' }) {
   return <StopsManager perpsAddress={perpsAddress} chainKey={chainKey} market={market} />
 }
 
@@ -1706,7 +1706,7 @@ function ConfigCard({ oracleAddress, perpsAddress }: { oracleAddress: string, pe
   )
 }
 
-function TreasuryCard({ perpsAddress, desired }: { perpsAddress: string, desired: 'base'|'baseSepolia' }) {
+function TreasuryCard({ perpsAddress, desired }: { perpsAddress: string, desired: 'bsc'|'bscTestnet' }) {
   return <ContractTreasury perpsAddress={perpsAddress} desired={desired} />
 }
 
@@ -1722,7 +1722,7 @@ function CopyBtn({ text }: { text: string }) {
   return <button className="btn sm" onClick={()=>navigator.clipboard?.writeText(text || '')}>{t('common_copy')}</button>
 }
 
-function GoalsCard({ chainKey, events, loading }: { chainKey: 'base'|'baseSepolia', events: Array<{ time:number, value:number, meta:any }>, loading: boolean }) {
+function GoalsCard({ chainKey, events, loading }: { chainKey: 'bsc'|'bscTestnet', events: Array<{ time:number, value:number, meta:any }>, loading: boolean }) {
   const { t } = useI18n()
   const [page, setPage] = useState(1)
   const pageSize = 10
@@ -1788,7 +1788,7 @@ function GoalsCard({ chainKey, events, loading }: { chainKey: 'base'|'baseSepoli
   )
 }
 
-function RandomCard({ chainKey, oracleAddress, items, loading }: { chainKey: 'base'|'baseSepolia', oracleAddress: string, items: Array<{ time:number, value:number }>, loading: boolean }) {
+function RandomCard({ chainKey, oracleAddress, items, loading }: { chainKey: 'bsc'|'bscTestnet', oracleAddress: string, items: Array<{ time:number, value:number }>, loading: boolean }) {
   const { t } = useI18n()
   return (
     <div className="card">
@@ -1829,7 +1829,7 @@ function RandomCard({ chainKey, oracleAddress, items, loading }: { chainKey: 'ba
 }
 
 // Perps Lab: propose new perps and vote
-function PerpsLab({ chainKey }: { chainKey: 'base'|'baseSepolia' }) {
+function PerpsLab({ chainKey }: { chainKey: 'bsc'|'bscTestnet' }) {
   const { t, lang } = useI18n()
   const { address, isConnected } = useAccount()
   const { signMessageAsync } = useSignMessage()
@@ -1943,8 +1943,8 @@ function PerpsLab({ chainKey }: { chainKey: 'base'|'baseSepolia' }) {
 
   const vote = async (id: string) => {
     if (!address) return
-    if (chainKey !== 'baseSepolia') {
-      alert(lang==='es' ? 'Cambia a Base Sepolia para votar' : 'Switch to Base Sepolia to vote')
+    if (chainKey !== 'bscTestnet') {
+      alert(lang==='es' ? 'Cambia a BSC Testnet para votar' : 'Switch to BSC Testnet to vote')
       return
     }
     try {

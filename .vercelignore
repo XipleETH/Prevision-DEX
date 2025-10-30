@@ -25,12 +25,3 @@ packages/relayer/dist
 # Git
 .git
 .gitignore
-
-# Clean legacy CI/deploy artifacts (avoid linking old project files)
-vercel.json
-railway.json
-Dockerfile
-build-vercel.sh
-README-railway.md
-# Ignore legacy root API (frontend project has its own API in packages/frontend/api)
-api/

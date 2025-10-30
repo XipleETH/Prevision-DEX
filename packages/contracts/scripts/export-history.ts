@@ -75,7 +75,7 @@ async function main() {
   const trimmed = acc.slice(-cap)
 
   // Write to frontend public history
-  const chainKey = network.name === 'baseSepolia' ? 'base-sepolia' : (network.name === 'base' ? 'base' : network.name)
+  const chainKey = network.name === 'bscTestnet' ? 'bsc-testnet' : (network.name === 'bsc' ? 'bsc' : network.name)
   const outDir = path.resolve(__dirname, '../../../packages/frontend/public/history')
   fs.mkdirSync(outDir, { recursive: true })
   const outPath = path.join(outDir, `${chainKey}-ticks.json`)

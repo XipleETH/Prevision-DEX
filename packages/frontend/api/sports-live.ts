@@ -2,7 +2,7 @@ import { Redis } from '@upstash/redis'
 
 export const config = { runtime: 'edge' }
 
-// GET /api/sports-live?secret=...&chain=base-sepolia
+// GET /api/sports-live?secret=...&chain=bsc-testnet
 // Returns consolidated live deltas for football, basketball, volleyball, handball in a single response.
 // This endpoint DOES NOT push events/ticks; it only updates "last" snapshots and returns items for the daemon to act upon.
 export default async function handler(req: Request): Promise<Response> {
@@ -12,7 +12,7 @@ export default async function handler(req: Request): Promise<Response> {
     const secret = (searchParams.get('secret') || '').trim()
     if (guard && secret !== guard) return json({ error: 'unauthorized' }, 401)
 
-    const chain = (searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = (searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const apiKey = (process.env.API_FOOTBALL_KEY || '').trim()
     if (!apiKey) return json({ error: 'missing API_FOOTBALL_KEY' }, 500)
 

@@ -2,11 +2,11 @@ import { Redis } from '@upstash/redis'
 
 export const config = { runtime: 'edge' }
 
-// GET /api/ticks?chain=base-sepolia&market=random&from=2025-10-21T04:00:00Z&to=2025-10-27T07:16:00Z&mode=summary|raw&limit=20000
+// GET /api/ticks?chain=bsc-testnet&market=random&from=2025-10-21T04:00:00Z&to=2025-10-27T07:16:00Z&mode=summary|raw&limit=20000
 export default async function handler(req: Request): Promise<Response> {
   try {
     const { searchParams } = new URL(req.url)
-    const chain = (searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = (searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const market = (searchParams.get('market') || 'btcd').toLowerCase()
     const mode = (searchParams.get('mode') || 'summary').toLowerCase()
     const limit = Math.max(1, Math.min(200000, Number(searchParams.get('limit') || (market === 'random' ? '200000' : '10000'))))

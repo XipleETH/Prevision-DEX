@@ -10,11 +10,11 @@ async function lazyHardhat() {
 }
 
 function getChain(): string {
-  // Prefer explicit CHAIN env (e.g., "base-sepolia" or "base").
+  // Prefer explicit CHAIN env (e.g., "bsc-testnet" or "bsc").
   const fromEnv = (process.env.CHAIN || '').trim()
   if (fromEnv) return fromEnv
   // Fallback default when not pushing on-chain
-  return 'base-sepolia'
+  return 'bsc-testnet'
 }
 
 async function fetchBTCD(): Promise<number> {

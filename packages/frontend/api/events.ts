@@ -2,11 +2,11 @@ import { Redis } from '@upstash/redis'
 
 export const config = { runtime: 'edge' }
 
-// GET /api/events?chain=base-sepolia&market=localaway&limit=20&leagues=39,140
+// GET /api/events?chain=bsc-testnet&market=localaway&limit=20&leagues=39,140
 export default async function handler(req: Request): Promise<Response> {
   try {
   const { searchParams } = new URL(req.url)
-    const chain = (searchParams.get('chain') || 'base-sepolia').toLowerCase()
+  const chain = (searchParams.get('chain') || 'bsc-testnet').toLowerCase()
     const market = (searchParams.get('market') || 'btcd').toLowerCase()
     const limit = Math.min(100, Math.max(1, Number(searchParams.get('limit') || '20')))
   const leagues = (searchParams.get('leagues') || '').trim()
@@ -91,9 +91,9 @@ export default async function handler(req: Request): Promise<Response> {
         // Secondary fallback: query on-chain logs if oracle and RPC URL available
         if (!recent.length && oracle) {
           // Pick RPC by chain
-          const rpc = chain === 'base'
-            ? ((process.env.BASE_RPC_URL || process.env.BASE_MAINNET_RPC || process.env.BASE_MAINNET_RPC_URL || process.env.BASE_RPC || process.env.VITE_BASE_RPC || process.env.VITE_BASE_MAINNET_RPC) || '')
-            : ((process.env.BASE_SEPOLIA_RPC_URL || process.env.BASE_SEPOLIA_RPC || process.env.BASE_SEPOLIA_MAINNET_RPC_URL || process.env.VITE_BASE_SEPOLIA_RPC) || '')
+          const rpc = chain === 'bsc'
+            ? ((process.env.BSC_RPC_URL || process.env.BSC_RPC || process.env.VITE_BSC_RPC) || '')
+            : ((process.env.BSC_TESTNET_RPC_URL || process.env.BSC_TESTNET_RPC || process.env.VITE_BSC_TESTNET_RPC) || '')
           if (rpc) {
             // Helpers
             const rpcCall = async (method: string, params: any[]) => {
@@ -241,7 +241,7 @@ export default async function handler(req: Request): Promise<Response> {
     if (searchParams.get('debug') === '1') {
       try {
         const counts: any = {}
-        const chains = Array.from(new Set([chain, chain === 'base' ? 'base-sepolia' : 'base']))
+  const chains = Array.from(new Set([chain, chain === 'bsc' ? 'bsc-testnet' : 'bsc']))
         for (const ch of chains) {
           const kLoc = `btcd:events:${ch}:localaway`
           const kHom = `btcd:events:${ch}:homeaway`

@@ -36,7 +36,7 @@ async function main() {
   let pages = 0
   const topic = ethers.id('PriceUpdated(int256,uint256)')
 
-  const chain = (process.env.CHAIN || (network.name === 'baseSepolia' ? 'base-sepolia' : (network.name === 'base' ? 'base' : network.name))).toLowerCase()
+  const chain = (process.env.CHAIN || (network.name === 'bscTestnet' ? 'bsc-testnet' : (network.name === 'bsc' ? 'bsc' : network.name))).toLowerCase()
   const market = 'random'
   const batch: Array<{ time: number; value: number }> = []
 

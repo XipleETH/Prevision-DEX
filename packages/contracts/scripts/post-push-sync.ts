@@ -19,7 +19,7 @@ async function main() {
   const value = Number(ethers.formatUnits(latest, 8))
   const time = Number(ts)
   const netName = network.name
-  const chain = (netName === 'baseSepolia') ? 'base-sepolia' : (netName === 'base' ? 'base' : netName)
+  const chain = (netName === 'bscTestnet') ? 'bsc-testnet' : (netName === 'bsc' ? 'bsc' : netName)
   if (!Number.isFinite(value) || !Number.isFinite(time) || !time) return
   const market = (process.env.MARKET || 'btcd').toLowerCase()
   await axios.post(ingestUrl, { secret: ingestSecret, chain, market, time, value }, { timeout: 10000 })

@@ -7,10 +7,10 @@ import axios from 'axios'
 //  API_BASE (required) -> e.g., https://your-vercel-app.vercel.app/api/football-live-goals
 //  API_SECRET (optional; must match Vercel env if configured)
 //  LEAGUES (optional CSV of league IDs to limit API-Football calls, e.g., "39,140,135,78")
-//  CHAIN (e.g., base-sepolia)
+//  CHAIN (e.g., bsc-testnet)
 //  INGEST_URL / INGEST_SECRET (optional for chart DB sync)
 //  MARKET=localaway (default)
-//  INTERVAL_MS (base poll cadence; default 60000 = 1 min)
+//  INTERVAL_MS (baseline poll cadence; default 60000 = 1 min)
 //  MAX_INTERVAL_MS (optional upper bound for dynamic backoff; default 300000 = 5 min)
 //  ALWAYS_POLL_EVERY_MINUTE=true (disable backoff and keep fixed cadence)
 //  PUSH_EVERY_TICK=true (push on-chain even if no goals to keep chart continuity)
@@ -93,7 +93,7 @@ async function main() {
     }
   } catch {}
 
-  // 1-minute cadence by default (base), with optional dynamic backoff up to MAX_INTERVAL_MS
+  // 1-minute cadence by default (baseline), with optional dynamic backoff up to MAX_INTERVAL_MS
   const baseInterval = Number(process.env.INTERVAL_MS || '60000')
   const maxInterval = Number(process.env.MAX_INTERVAL_MS || '300000')
   const alwaysPollEveryMinute = String(process.env.ALWAYS_POLL_EVERY_MINUTE || 'true').toLowerCase() === 'true'
@@ -108,7 +108,7 @@ async function main() {
   // Optional DB ingest for shared chart
   const ingestUrl = (process.env.INGEST_URL || '').trim()
   const ingestSecret = (process.env.INGEST_SECRET || '').trim()
-  const chain = (process.env.CHAIN || (network.name === 'baseSepolia' ? 'base-sepolia' : (network.name === 'base' ? 'base' : network.name))).toLowerCase()
+  const chain = (process.env.CHAIN || (network.name === 'bscTestnet' ? 'bsc-testnet' : (network.name === 'bsc' ? 'bsc' : network.name))).toLowerCase()
   const market = (process.env.MARKET || 'localaway').toLowerCase()
   // Optional shared snapshot API (root /api/last guarded by INGEST_SECRET)
   const lastApi = (process.env.LAST_URL || (ingestUrl ? ingestUrl.replace('/ingest', '/last') : '')).trim()
@@ -996,7 +996,7 @@ async function main() {
       }
 
       // All pushes are handled per-goal above; if no goals we optionally pushed a no-goal tick.
-      // reset interval back to base after activity
+  // reset interval back to baseline after activity
       currentInterval = baseInterval
     } catch (e: any) {
       console.error('tick error', e?.message || e)
