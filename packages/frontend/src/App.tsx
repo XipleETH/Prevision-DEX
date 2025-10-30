@@ -607,7 +607,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
     const chart = createChart(el, {
       width: el.clientWidth,
       height: initialHeight,
-      layout: { background: { type: ColorType.Solid, color: '#0b1221' }, textColor: '#DDD' },
+      layout: { background: { type: ColorType.Solid, color: '#f7f1e3' }, textColor: '#2d1f10' },
       rightPriceScale: { borderVisible: false },
       timeScale: { borderVisible: false, timeVisible: true, secondsVisible: false },
     })
@@ -809,7 +809,7 @@ const queryClient = new QueryClient()
 function AppInner({ routeMarket, isLab }: { routeMarket: 'btcd'|'random'|'localaway', isLab?: boolean }) {
   const market: 'btcd'|'random'|'localaway' = routeMarket
   const config = useMemo(() => getDefaultConfig({
-    appName: 'Perp-it',
+    appName: 'Prevision',
     projectId: 'btcd-temp',
     chains: [bsc, bscTestnet],
     transports: {
@@ -909,7 +909,7 @@ function AppContent({ market, isLab }: { market: 'btcd'|'random'|'localaway', is
         <div className="header-left" style={{ flexDirection:'column', alignItems:'flex-start', gap:8 }}>
           {/* Top row: Brand only (no fixed width so wallet can align right on the same row) */}
           <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-            <div className="brand">Perp-it</div>
+            <div className="brand">Prevision</div>
           </div>
           {/* Second row: Network menu under title */}
           <div className={`network-menu ${isLab ? 'lab-mode' : ''}`} style={{ marginTop: 2 }}>
