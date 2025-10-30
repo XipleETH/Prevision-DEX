@@ -3,7 +3,7 @@
 export const deployed = {
   bscTestnet: {
     btcd: { oracle: '', perps: '' },
-    random: { oracle: '', perps: '' },
+    random: { oracle: '0xd6a74bfB6216BADA5006BB516eF0DE18Ca133E2A', perps: '0x4a1e79D6241Ee2926c1A0619cF74Bf3673555acD' },
     localaway: { oracle: '', perps: '' }
   },
   bsc: {
