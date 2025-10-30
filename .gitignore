@@ -34,3 +34,7 @@ coverage/
 # Logs
 logs/
 *.log
+
+# Generated deploy artifacts (addresses / env snippets)
+packages/contracts/addresses.*.json
+packages/contracts/.env.random
