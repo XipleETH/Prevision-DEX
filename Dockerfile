@@ -24,6 +24,6 @@ ENV CG_INTERVAL_SEC=30 \
     MIN_CHANGE=0 \
     EXCLUDE_STABLES=true
 
-# Start daemon (selectable): set DAEMON=keepers to run keepers; default is price daemon
+# Start daemon (selectable): DAEMON=cg | random | keepers (default: cg)
 ENV DAEMON=cg
-CMD ["bash", "-lc", "if [ \"$DAEMON\" = \"keepers\" ]; then npm -w packages/contracts run keepers; else npm -w packages/contracts run daemon:cg; fi"]
+CMD ["bash", "-lc", "case \"$DAEMON\" in keepers) npm -w packages/contracts run keepers ;; random) npm -w packages/contracts run daemon:random ;; cg|\"\") npm -w packages/contracts run daemon:cg ;; *) echo \"Unknown DAEMON=$DAEMON\"; exit 1 ;; esac"]
