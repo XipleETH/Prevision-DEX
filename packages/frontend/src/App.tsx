@@ -682,18 +682,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
           {/* Events banner over the candlestick chart (LocalAway) — always visible */}
           {market==='localaway' && (
             <div style={{ position:'absolute', top:6, left:6, right:6, zIndex:3 }}>
-              <div style={{
-                background:'rgba(12,18,33,0.9)',
-                border:'1px solid rgba(255,255,255,0.12)',
-                borderRadius:6,
-                padding:'6px 10px',
-                overflow:'hidden',
-                display:'flex',
-                flexWrap:'nowrap',
-                gap:16,
-                alignItems:'center',
-                minHeight: 28
-              }} ref={bannerRef}>
+              <div className="tv-banner" ref={bannerRef}>
                 {Array.isArray(localawayEvents) && localawayEvents.length > 0 ? (
                   localawayEvents.map((e, idx) => {
                     const lg = e.meta?.league || ''
@@ -727,18 +716,7 @@ function DominanceChart({ oracleAddress, chainKey, market, localawayEvents, loca
           {/* Numbers banner over the candlestick chart (Random) — always visible */}
           {market==='random' && (
             <div style={{ position:'absolute', top:6, left:6, right:6, zIndex:3 }}>
-              <div style={{
-                background:'rgba(12,18,33,0.9)',
-                border:'1px solid rgba(255,255,255,0.12)',
-                borderRadius:6,
-                padding:'6px 10px',
-                overflow:'hidden',
-                display:'flex',
-                flexWrap:'nowrap',
-                gap:16,
-                alignItems:'center',
-                minHeight: 28
-              }} ref={randBannerRef}>
+              <div className="tv-banner" ref={randBannerRef}>
                 {Array.isArray(randomEvents) && randomEvents.length > 0 ? (
                   randomEvents.map((r, idx) => {
                     const prev = randomEvents[idx+1]?.value
