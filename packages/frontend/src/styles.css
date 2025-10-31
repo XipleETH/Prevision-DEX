@@ -147,7 +147,7 @@ body {
 
 /* Lab button in header */
 .lab-btn { background: transparent !important; border-color: var(--border) !important; color: var(--muted) !important; }
-.lab-btn.active { background: #fdebd2 !important; color: var(--text) !important; border-color: var(--border) !important; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); }
+.lab-btn.active { background: var(--accent-bg) !important; color: var(--text) !important; border-color: var(--accent-border) !important; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); }
 
 .pnl.up { color: var(--success); }
 .pnl.down { color: var(--danger); }
@@ -220,10 +220,19 @@ body {
   --accent-border: rgba(214,211,209,0.85);
   --accent-border-soft: rgba(214,211,209,0.25);
 }
+/* Perps Lab: light mint/green accents */
+.market-lab {
+  --accent: #27c37b;             /* mint green */
+  --accent-strong: #19d678;      /* stronger mint */
+  --accent-bg: #ecfff6;          /* pale mint paper */
+  --accent-border: rgba(39,195,123,0.85);
+  --accent-border-soft: rgba(39,195,123,0.25);
+}
 
 .market-btcd .brand,
 .market-random .brand,
-.market-localaway .brand {
+.market-localaway .brand,
+.market-lab .brand {
   /* add a subtle accent hue into the crayon shadow */
   text-shadow:
     1px 1px 0 rgba(227,150,62,0.35),
@@ -233,45 +242,56 @@ body {
 
 .market-btcd .card,
 .market-random .card,
-.market-localaway .card { border-color: var(--accent-border); }
+.market-localaway .card,
+.market-lab .card { border-color: var(--accent-border); }
 .market-btcd .card::after,
 .market-random .card::after,
-.market-localaway .card::after {
+.market-localaway .card::after,
+.market-lab .card::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   box-shadow: 0 0 0 1px var(--accent-border), 0 0 0 4px var(--accent-border-soft);
 }
 .market-btcd .card-header,
 .market-random .card-header,
-.market-localaway .card-header { border-bottom-color: var(--accent-border); }
+.market-localaway .card-header,
+.market-lab .card-header { border-bottom-color: var(--accent-border); }
 
 .market-btcd .tab,
 .market-random .tab,
-.market-localaway .tab { border-color: var(--accent-border); background: rgba(255,255,255,0.6); }
+.market-localaway .tab,
+.market-lab .tab { border-color: var(--accent-border); background: rgba(255,255,255,0.6); }
 .market-btcd .tab.active,
 .market-random .tab.active,
-.market-localaway .tab.active { background: var(--accent-bg); border-color: var(--accent-border); }
+.market-localaway .tab.active,
+.market-lab .tab.active { background: var(--accent-bg); border-color: var(--accent-border); }
 
 .market-btcd .segmented,
 .market-random .segmented,
-.market-localaway .segmented { border-color: var(--accent-border); background: rgba(255,255,255,0.6); }
+.market-localaway .segmented,
+.market-lab .segmented { border-color: var(--accent-border); background: rgba(255,255,255,0.6); }
 .market-btcd .seg,
 .market-random .seg,
-.market-localaway .seg { border-right-color: var(--accent-border); }
+.market-localaway .seg,
+.market-lab .seg { border-right-color: var(--accent-border); }
 .market-btcd .seg.active,
 .market-random .seg.active,
-.market-localaway .seg.active { background: var(--accent-bg); }
+.market-localaway .seg.active,
+.market-lab .seg.active { background: var(--accent-bg); }
 
 .market-btcd .btn,
 .market-random .btn,
-.market-localaway .btn { border-color: var(--accent-border); }
+.market-localaway .btn,
+.market-lab .btn { border-color: var(--accent-border); }
 .market-btcd .btn.primary,
 .market-random .btn.primary,
-.market-localaway .btn.primary { background: var(--accent-bg); border-color: var(--accent-border); }
+.market-localaway .btn.primary,
+.market-lab .btn.primary { background: var(--accent-bg); border-color: var(--accent-border); }
 
 /* Chart subtle accent glow per market */
 .market-btcd .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(249,115,22,0.15); }
 .market-random .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(124,58,237,0.15); }
 .market-localaway .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(168,162,158,0.15); }
+.market-lab .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(39,195,123,0.15); }
 
 /* --- Enforced light crayon overrides (ensure lighter cards, menus, headers, chart frame, and buttons) --- */
 .tv-banner {
@@ -289,71 +309,72 @@ body {
 }
 .market-btcd .tv-banner,
 .market-random .tv-banner,
-.market-localaway .tv-banner {
+.market-localaway .tv-banner,
+.market-lab .tv-banner {
   background: var(--accent-bg) !important;
   border-color: var(--accent-border) !important;
 }
-.market-btcd .card, .market-random .card, .market-localaway .card {
+.market-btcd .card, .market-random .card, .market-localaway .card, .market-lab .card {
   background: var(--panel) !important;
   border-color: var(--accent-border) !important;
 }
-.market-btcd .card-header, .market-random .card-header, .market-localaway .card-header {
+.market-btcd .card-header, .market-random .card-header, .market-localaway .card-header, .market-lab .card-header {
   background: var(--accent-bg) !important;
   border-bottom-color: var(--accent-border) !important;
 }
-.market-btcd .card-header h3, .market-random .card-header h3, .market-localaway .card-header h3 {
+.market-btcd .card-header h3, .market-random .card-header h3, .market-localaway .card-header h3, .market-lab .card-header h3 {
   color: var(--text) !important;
 }
 
 /* Tabs and segmented controls (menus: info/positions/history, Live/Test, BTC.D/Random, language) */
-.market-btcd .tab, .market-random .tab, .market-localaway .tab {
+.market-btcd .tab, .market-random .tab, .market-localaway .tab, .market-lab .tab {
   background: rgba(255,255,255,0.6) !important;
   border-color: var(--accent-border) !important;
   color: var(--muted) !important;
 }
-.market-btcd .tab.active, .market-random .tab.active, .market-localaway .tab.active {
+.market-btcd .tab.active, .market-random .tab.active, .market-localaway .tab.active, .market-lab .tab.active {
   background: var(--accent-bg) !important;
   border-color: var(--accent-border) !important;
   color: var(--text) !important;
 }
-.market-btcd .segmented, .market-random .segmented, .market-localaway .segmented {
+.market-btcd .segmented, .market-random .segmented, .market-localaway .segmented, .market-lab .segmented {
   background: rgba(255,255,255,0.6) !important;
   border-color: var(--accent-border) !important;
 }
-.market-btcd .seg, .market-random .seg, .market-localaway .seg {
+.market-btcd .seg, .market-random .seg, .market-localaway .seg, .market-lab .seg {
   border-right-color: var(--accent-border) !important;
   color: var(--muted) !important;
 }
-.market-btcd .seg:hover, .market-random .seg:hover, .market-localaway .seg:hover {
+.market-btcd .seg:hover, .market-random .seg:hover, .market-localaway .seg:hover, .market-lab .seg:hover {
   background: rgba(255,255,255,0.75) !important;
   color: var(--text) !important;
 }
-.market-btcd .seg.active, .market-random .seg.active, .market-localaway .seg.active {
+.market-btcd .seg.active, .market-random .seg.active, .market-localaway .seg.active, .market-lab .seg.active {
   background: var(--accent-bg) !important;
   color: var(--text) !important;
   box-shadow: inset 0 0 0 2px rgba(0,0,0,0.03) !important;
 }
 
 /* Buttons, inputs and stats inside cards */
-.market-btcd .btn, .market-random .btn, .market-localaway .btn {
+.market-btcd .btn, .market-random .btn, .market-localaway .btn, .market-lab .btn {
   background: #fffdf6 !important;
   color: var(--text) !important;
   border-color: var(--accent-border) !important;
 }
-.market-btcd .btn.primary, .market-random .btn.primary, .market-localaway .btn.primary {
+.market-btcd .btn.primary, .market-random .btn.primary, .market-localaway .btn.primary, .market-lab .btn.primary {
   background: var(--accent-bg) !important;
   border-color: var(--accent-border) !important;
 }
-.market-btcd .input, .market-random .input, .market-localaway .input,
-.market-btcd .stat, .market-random .stat, .market-localaway .stat,
-.market-btcd .code-row, .market-random .code-row, .market-localaway .code-row {
+.market-btcd .input, .market-random .input, .market-localaway .input, .market-lab .input,
+.market-btcd .stat, .market-random .stat, .market-localaway .stat, .market-lab .stat,
+.market-btcd .code-row, .market-random .code-row, .market-localaway .code-row, .market-lab .code-row {
   background: #fffdf6 !important;
   color: var(--text) !important;
   border-color: var(--accent-border) !important;
 }
 
 /* Chart frame: lighter border with per-market crayon glow */
-.market-btcd .chart, .market-random .chart, .market-localaway .chart {
+.market-btcd .chart, .market-random .chart, .market-localaway .chart, .market-lab .chart {
   border-color: var(--accent-border) !important;
   box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px var(--accent-border-soft) !important;
 }
@@ -458,7 +479,7 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter,
 /* Lab button: transparent when not active, but keep a subtle border like other header buttons;
   when active, use the radioactive green style */
 .lab-btn { background: transparent !important; border-color: var(--border) !important; color: var(--muted) !important; }
-.lab-btn.active { background: #103024 !important; color: #d9ffe6 !important; border-color: #27c37b !important; box-shadow: 0 0 0 1px rgba(39,195,123,0.4) inset, 0 0 18px rgba(39,195,123,0.25); }
+.lab-btn.active { background: var(--accent-bg) !important; color: var(--text) !important; border-color: var(--accent-border) !important; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); }
 
 /* In Lab mode, keep Live/Test segmented buttons transparent even if active */
 .lab-mode .seg.active { background: transparent; color: var(--muted); box-shadow: none; }
