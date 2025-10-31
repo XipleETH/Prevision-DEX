@@ -46,7 +46,7 @@ body {
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 
 .brand {
-  font-family: 'Permanent Marker', cursive;
+  font-family: 'Gloria Hallelujah', 'Permanent Marker', 'Patrick Hand', cursive;
   font-weight: 700;
   letter-spacing: 1.2px;
   font-size: 40px;
@@ -197,6 +197,81 @@ body {
   .chart-guard.left { width: 10px; background: linear-gradient(to right, rgba(0,0,0,0.025), rgba(0,0,0,0)); }
   .chart-guard.right { width: 10px; background: linear-gradient(to left, rgba(0,0,0,0.025), rgba(0,0,0,0)); }
 }
+
+/* Market accents (light crayon variants) */
+.market-btcd {
+  --accent: #f59a57;             /* light orange */
+  --accent-strong: #f97316;      /* stronger orange */
+  --accent-bg: #fff3e7;          /* pale orange paper */
+  --accent-border: rgba(245,154,87,0.85);
+  --accent-border-soft: rgba(245,154,87,0.25);
+}
+.market-random {
+  --accent: #b799ff;             /* light purple */
+  --accent-strong: #7c3aed;      /* stronger purple */
+  --accent-bg: #f6f0ff;          /* pale purple paper */
+  --accent-border: rgba(183,153,255,0.85);
+  --accent-border-soft: rgba(183,153,255,0.25);
+}
+.market-localaway {
+  --accent: #d6d3d1;             /* light grey/bone */
+  --accent-strong: #a8a29e;      /* stronger grey */
+  --accent-bg: #fafaf9;          /* pale bone */
+  --accent-border: rgba(214,211,209,0.85);
+  --accent-border-soft: rgba(214,211,209,0.25);
+}
+
+.market-btcd .brand,
+.market-random .brand,
+.market-localaway .brand {
+  /* add a subtle accent hue into the crayon shadow */
+  text-shadow:
+    1px 1px 0 rgba(227,150,62,0.35),
+    -1px 2px 0 var(--accent-border-soft),
+    2px -1px 0 rgba(228, 87, 46, 0.18);
+}
+
+.market-btcd .card,
+.market-random .card,
+.market-localaway .card { border-color: var(--accent-border); }
+.market-btcd .card::after,
+.market-random .card::after,
+.market-localaway .card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: 0 0 0 1px var(--accent-border), 0 0 0 4px var(--accent-border-soft);
+}
+.market-btcd .card-header,
+.market-random .card-header,
+.market-localaway .card-header { border-bottom-color: var(--accent-border); }
+
+.market-btcd .tab,
+.market-random .tab,
+.market-localaway .tab { border-color: var(--accent-border); background: rgba(255,255,255,0.6); }
+.market-btcd .tab.active,
+.market-random .tab.active,
+.market-localaway .tab.active { background: var(--accent-bg); border-color: var(--accent-border); }
+
+.market-btcd .segmented,
+.market-random .segmented,
+.market-localaway .segmented { border-color: var(--accent-border); background: rgba(255,255,255,0.6); }
+.market-btcd .seg,
+.market-random .seg,
+.market-localaway .seg { border-right-color: var(--accent-border); }
+.market-btcd .seg.active,
+.market-random .seg.active,
+.market-localaway .seg.active { background: var(--accent-bg); }
+
+.market-btcd .btn,
+.market-random .btn,
+.market-localaway .btn { border-color: var(--accent-border); }
+.market-btcd .btn.primary,
+.market-random .btn.primary,
+.market-localaway .btn.primary { background: var(--accent-bg); border-color: var(--accent-border); }
+
+/* Chart subtle accent glow per market */
+.market-btcd .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(249,115,22,0.15); }
+.market-random .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(124,58,237,0.15); }
+.market-localaway .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(168,162,158,0.15); }
 
 /* Minimal modern exchange-like theme */
 :root {
