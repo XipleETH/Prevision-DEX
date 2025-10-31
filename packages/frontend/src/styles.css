@@ -273,6 +273,72 @@ body {
 .market-random .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(124,58,237,0.15); }
 .market-localaway .chart { box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px rgba(168,162,158,0.15); }
 
+/* --- Enforced light crayon overrides (ensure lighter cards, menus, headers, chart frame, and buttons) --- */
+.market-btcd .card, .market-random .card, .market-localaway .card {
+  background: var(--panel) !important;
+  border-color: var(--accent-border) !important;
+}
+.market-btcd .card-header, .market-random .card-header, .market-localaway .card-header {
+  background: var(--accent-bg) !important;
+  border-bottom-color: var(--accent-border) !important;
+}
+.market-btcd .card-header h3, .market-random .card-header h3, .market-localaway .card-header h3 {
+  color: var(--text) !important;
+}
+
+/* Tabs and segmented controls (menus: info/positions/history, Live/Test, BTC.D/Random, language) */
+.market-btcd .tab, .market-random .tab, .market-localaway .tab {
+  background: rgba(255,255,255,0.6) !important;
+  border-color: var(--accent-border) !important;
+  color: var(--muted) !important;
+}
+.market-btcd .tab.active, .market-random .tab.active, .market-localaway .tab.active {
+  background: var(--accent-bg) !important;
+  border-color: var(--accent-border) !important;
+  color: var(--text) !important;
+}
+.market-btcd .segmented, .market-random .segmented, .market-localaway .segmented {
+  background: rgba(255,255,255,0.6) !important;
+  border-color: var(--accent-border) !important;
+}
+.market-btcd .seg, .market-random .seg, .market-localaway .seg {
+  border-right-color: var(--accent-border) !important;
+  color: var(--muted) !important;
+}
+.market-btcd .seg:hover, .market-random .seg:hover, .market-localaway .seg:hover {
+  background: rgba(255,255,255,0.75) !important;
+  color: var(--text) !important;
+}
+.market-btcd .seg.active, .market-random .seg.active, .market-localaway .seg.active {
+  background: var(--accent-bg) !important;
+  color: var(--text) !important;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.03) !important;
+}
+
+/* Buttons, inputs and stats inside cards */
+.market-btcd .btn, .market-random .btn, .market-localaway .btn {
+  background: #fffdf6 !important;
+  color: var(--text) !important;
+  border-color: var(--accent-border) !important;
+}
+.market-btcd .btn.primary, .market-random .btn.primary, .market-localaway .btn.primary {
+  background: var(--accent-bg) !important;
+  border-color: var(--accent-border) !important;
+}
+.market-btcd .input, .market-random .input, .market-localaway .input,
+.market-btcd .stat, .market-random .stat, .market-localaway .stat,
+.market-btcd .code-row, .market-random .code-row, .market-localaway .code-row {
+  background: #fffdf6 !important;
+  color: var(--text) !important;
+  border-color: var(--accent-border) !important;
+}
+
+/* Chart frame: lighter border with per-market crayon glow */
+.market-btcd .chart, .market-random .chart, .market-localaway .chart {
+  border-color: var(--accent-border) !important;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.02), 0 12px 28px rgba(75,55,30,0.2), 0 0 24px var(--accent-border-soft) !important;
+}
+
 /* Minimal modern exchange-like theme */
 :root {
   --bg: #0b1221;
