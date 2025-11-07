@@ -130,6 +130,7 @@ const translations: Record<Lang, Record<string, string>> = {
     info_btcd: 'BTC Dominance (BTC.D) es un índice que sigue la dominancia de BTC como porcentaje del mercado. En Perp‑it, lo aproximamos con una fórmula similar a TradingView agregando los 250 tokens principales. Los datos de mercado provienen de APIs públicas (CoinGecko) y nuestra API interna los resume para el oráculo y las velas.',
     info_random: 'Random genera un movimiento aleatorio en cada tick (en promedio cada ~7 segundos): un valor entre −0,10% y +0,10% se suma al índice. Es útil para probar estrategias y el flujo de trading sin depender de mercados externos.',
     info_localaway: 'Home/Away Index se mueve según los eventos de partido: suma cuando anota el equipo local y resta cuando anota el visitante. Soporta varios deportes (handball, basketball, football y volleyball). La magnitud por evento suele estar en el rango de −0,10% a +0,10% según el deporte y el contexto. Los eventos llegan desde una API de deportes y nuestra API interna los adapta.'
+  , lab_simulate: 'Simular', lab_simulating: 'Simulando…', lab_preview_title: 'Vista previa de velas', lab_propose_oracle: 'Guardar Oracle', lab_oracle_saved: 'Oracle guardado', lab_oracle_id: 'ID', lab_sim_error: 'Error de simulación'
   },
   en: {
     ui_network_live: 'Live Perps',
@@ -251,6 +252,7 @@ const translations: Record<Lang, Record<string, string>> = {
     info_btcd: 'BTC Dominance (BTC.D) tracks bitcoin’s dominance as a percentage of the market. In Perp‑it, we approximate it with a TradingView‑like formula by aggregating the top 250 tokens. Market data comes from public APIs (CoinGecko), and our internal API composes and summarizes it for the oracle and candles.',
     info_random: 'Random produces an artificial move on each tick (on average every ~7 seconds): a value between −0.10% and +0.10% is added to the index. It’s handy to test strategies and the trading flow without relying on external markets.',
     info_localaway: 'The Home/Away Index responds to match events: it goes up when the home team scores and down when the away team scores. It supports multiple sports (handball, basketball, football and volleyball). The per‑event magnitude is typically between −0.10% and +0.10%, depending on the sport and context. Events arrive from a sports API and our internal API adapts them.'
+  , lab_simulate: 'Simulate', lab_simulating: 'Simulating…', lab_preview_title: 'Candles preview', lab_propose_oracle: 'Save Oracle', lab_oracle_saved: 'Oracle saved', lab_oracle_id: 'ID', lab_sim_error: 'Simulation error'
   }
 }
 const I18nContext = createContext<{ lang: Lang; t: (k: string) => string }>({ lang: 'es', t: (k)=> translations.es[k] || k })
@@ -1819,6 +1821,14 @@ function PerpsLab({ chainKey }: { chainKey: 'bsc'|'bscTestnet' }) {
   const [apiCost, setApiCost] = useState<'free'|'paid'|'none'>('none')
   const [formula, setFormula] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  // Simulation / preview state
+  const [simulating, setSimulating] = useState(false)
+  const [simulateErr, setSimulateErr] = useState<string>('')
+  const [previewCandles, setPreviewCandles] = useState<Candle[]>([])
+  const previewChartRef = useRef<IChartApi|null>(null)
+  const previewSeriesRef = useRef<ISeriesApi<'Candlestick'>|null>(null)
+  const [oracleSaving, setOracleSaving] = useState(false)
+  const [oracleSavedId, setOracleSavedId] = useState<string>('')
   const [page, setPage] = useState(1)
   const [votedIds, setVotedIds] = useState<Record<string, true>>({})
   const baseUrl = (import.meta as any).env?.VITE_API_BASE || ''
@@ -1918,6 +1928,89 @@ function PerpsLab({ chainKey }: { chainKey: 'bsc'|'bscTestnet' }) {
       }
     } finally { setSubmitting(false) }
   }
+
+  const simulate = async () => {
+    setSimulateErr('')
+    setOracleSavedId('')
+    setPreviewCandles([])
+    if (!apiUrl.trim() && !formula.trim()) {
+      setSimulateErr(lang==='es' ? 'Ingresa API o fórmula' : 'Enter API or formula')
+      return
+    }
+    setSimulating(true)
+    try {
+      const body: any = { sourceUrl: apiUrl || undefined, formula: formula || undefined }
+      const r = await fetch(`${baseUrl}/api/oracle-simulate`, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body) })
+      if (!r.ok) {
+        const txt = await r.text().catch(()=> '')
+        throw new Error(`HTTP ${r.status}${txt?`: ${txt}`:''}`)
+      }
+      const j = await r.json()
+      const csRaw = Array.isArray(j?.candles) ? j.candles : []
+      const cs: Candle[] = csRaw.map((c:any) => ({ time: Number(c.time) as UTCTimestamp, open: Number(c.open), high: Number(c.high), low: Number(c.low), close: Number(c.close) }))
+      setPreviewCandles(cs)
+    } catch (e:any) {
+      setSimulateErr(e?.message || String(e))
+    } finally {
+      setSimulating(false)
+    }
+  }
+
+  const saveOracle = async () => {
+    setOracleSavedId('')
+    if (!name.trim() || !formula.trim()) {
+      alert(lang==='es' ? 'Faltan nombre y fórmula' : 'Missing name and formula')
+      return
+    }
+    setOracleSaving(true)
+    try {
+      const body: any = { name, description, apiUrl, apiCost: apiCost==='none'?undefined:apiCost, formula }
+      const r = await fetch(`${baseUrl}/api/oracle-propose`, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body) })
+      if (!r.ok) {
+        const txt = await r.text().catch(()=> '')
+        throw new Error(`HTTP ${r.status}${txt?`: ${txt}`:''}`)
+      }
+      const j = await r.json()
+      if (j?.id) setOracleSavedId(String(j.id))
+      if (Array.isArray(j?.preview?.candles)) {
+        const cs: Candle[] = j.preview.candles.map((c:any) => ({ time: Number(c.time) as UTCTimestamp, open: Number(c.open), high: Number(c.high), low: Number(c.low), close: Number(c.close) }))
+        setPreviewCandles(cs)
+      }
+    } catch (e:any) {
+      alert((lang==='es' ? 'No se pudo guardar oracle: ' : 'Failed to save oracle: ') + (e?.message||String(e)))
+    } finally {
+      setOracleSaving(false)
+    }
+  }
+
+  // Render or update preview chart when candles change
+  useEffect(() => {
+    const el = document.getElementById('lab_preview_chart') as HTMLDivElement | null
+    if (!el) return
+    if (!previewCandles.length) {
+      // destroy if exists
+      if (previewChartRef.current) {
+        try { previewChartRef.current.remove() } catch {}
+        previewChartRef.current = null
+        previewSeriesRef.current = null
+        while (el.firstChild) el.removeChild(el.firstChild)
+      }
+      return
+    }
+    if (!previewChartRef.current) {
+      const chart = createChart(el, {
+        width: el.clientWidth || 480,
+        height: 220,
+        layout: { background: { type: ColorType.Solid, color: '#faf7f1' }, textColor: '#261b0f' },
+        rightPriceScale: { borderVisible: false },
+        timeScale: { borderVisible: false, timeVisible: true, secondsVisible: false },
+      })
+      const series = chart.addCandlestickSeries({ upColor:'#16a34a', downColor:'#ef4444', borderVisible:false, wickUpColor:'#16a34a', wickDownColor:'#ef4444' })
+      previewChartRef.current = chart as any
+      previewSeriesRef.current = series as any
+    }
+    previewSeriesRef.current?.setData(previewCandles as any)
+  }, [previewCandles])
 
   const vote = async (id: string) => {
     if (!address) return
@@ -2030,6 +2123,38 @@ function PerpsLab({ chainKey }: { chainKey: 'bsc'|'bscTestnet' }) {
       <div className="card">
         <div className="card-header"><h3>{t('lab_list_title')}</h3></div>
         <div className="card-body">
+          {/* Simulation / Save controls & preview moved above proposals list for clarity */}
+          <div className="grid" style={{ gap:12, marginBottom:16 }}>
+            <div className="row" style={{ gap:8, flexWrap:'wrap' }}>
+              <button type="button" className="btn" disabled={simulating} onClick={simulate}>{simulating ? t('lab_simulating') : t('lab_simulate')}</button>
+              <button type="button" className="btn" disabled={oracleSaving || !previewCandles.length} onClick={saveOracle}>{t('lab_propose_oracle')}</button>
+            </div>
+            {(simulateErr) && (
+              <div className="error small" style={{ whiteSpace:'pre-wrap' }}>{t('lab_sim_error')}: {simulateErr}</div>
+            )}
+            {oracleSavedId && (
+              <div className="muted small" style={{ marginTop:0 }}>
+                {t('lab_oracle_saved')}: <strong>{t('lab_oracle_id')} {oracleSavedId}</strong>
+              </div>
+            )}
+            {/* Preview Chart */}
+            <div className="card" style={{ marginTop:4 }}>
+              <div className="card-header" style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <h4 style={{ fontSize:14 }}>{t('lab_preview_title')}</h4>
+                <span className="muted small">{previewCandles.length ? `${previewCandles.length} candles` : (simulating ? (lang==='es' ? 'Procesando…' : 'Processing…') : '—')}</span>
+              </div>
+              <div className="card-body p0">
+                <div id="lab_preview_chart" style={{ width:'100%', minHeight: previewCandles.length ? 220 : 120, display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }}>
+                  {!previewCandles.length && !simulating && (
+                    <div className="muted small" style={{ padding:12 }}>{lang==='es' ? 'Sin vista previa todavía.' : 'No preview yet.'}</div>
+                  )}
+                  {simulating && (
+                    <div className="muted small" style={{ padding:12 }}>{t('lab_simulating')}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
           {proposalsQ.isLoading ? (
             <div className="muted">{t('lab_loading')}</div>
           ) : proposalsQ.isError ? (
